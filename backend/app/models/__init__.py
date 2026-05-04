@@ -1,0 +1,1 @@
+from app.models.price import Price  # noqa: F401

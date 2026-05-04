@@ -4,6 +4,7 @@ from fastapi import FastAPI
 
 from app.core.config import get_settings
 from app.core.redis import close_redis
+from app.services.ree import ree_client
 
 settings = get_settings()
 
@@ -15,6 +16,7 @@ async def lifespan(app: FastAPI):
     yield
     # Shutdown
     await close_redis()
+    await ree_client.close()
     print("👋 Closing connections")
 
 
