@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "UsoLuz",
+    "slug": "uso-luz",
+    "version": "1.0.0",
+    "scheme": "usoluz",
+    "platforms": ["ios", "android"],
+    "plugins": [
+      "expo-router",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#ffb800"
+        }
+      ]
+    ],
+    "android": {
+      "package": "es.jgm1997.usoluz",
+      "googleServicesFile": "./google-services.json"
+    },
+    "ios": {
+      "bundleIdentifier": "es.jgm1997.usoluz",
+      "googleServicesFile": "./GoogleService-Info.plist"
+    }
+  }
+}
