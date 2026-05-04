@@ -13,6 +13,7 @@ dependencies = [
     "redis[hiredis]",
     "httpx",
     "apscheduler",
+    "firebase-admin",
 ]
 
 [project.optional-dependencies]

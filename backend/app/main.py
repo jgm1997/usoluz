@@ -9,6 +9,7 @@ from app.services.ree import ree_client
 from app.api.v1.routes import prices
 from app.scheduler.jobs import warmup
 from app.scheduler.setup import create_scheduler
+from app.api.v1.routes import alerts
 
 settings = get_settings()
 API_GLOBAL_PREFIX = "/api/v1"
@@ -39,6 +40,7 @@ app = FastAPI(
 )
 
 app.include_router(prices.router, prefix=API_GLOBAL_PREFIX)
+app.include_router(alerts.router, prefix=API_GLOBAL_PREFIX)
 
 
 @app.get("/health")
