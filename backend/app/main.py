@@ -1,12 +1,15 @@
 from contextlib import asynccontextmanager
+from sys import prefix
 
 from fastapi import FastAPI
 
 from app.core.config import get_settings
 from app.core.redis import close_redis
 from app.services.ree import ree_client
+from app.api.v1.routes import prices
 
 settings = get_settings()
+API_GLOBAL_PREFIX = "/api/v1"
 
 
 @asynccontextmanager
@@ -26,6 +29,8 @@ app = FastAPI(
     docs_url="/docs" if settings.app_env == "development" else None,
     lifespan=lifespan,
 )
+
+app.include_router(prices.router, prefix=API_GLOBAL_PREFIX)
 
 
 @app.get("/health")

@@ -77,7 +77,7 @@ class ReeClient:
         result.sort(key=lambda x: x["datetime_utc"])
         return result
 
-    async def get_pvpc_prices(self, target_date: str) -> list[dict[str, Any]]:
+    async def get_pvpc_prices(self, target_date: date) -> list[dict[str, Any]]:
         raw = await self._get_prices(target_date)
         prices = self._parse_values(raw, "PVPC", "ree_pvpc")
         if not prices:
