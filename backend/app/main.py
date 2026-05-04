@@ -7,6 +7,8 @@ from app.core.config import get_settings
 from app.core.redis import close_redis
 from app.services.ree import ree_client
 from app.api.v1.routes import prices
+from app.scheduler.jobs import warmup
+from app.scheduler.setup import create_scheduler
 
 settings = get_settings()
 API_GLOBAL_PREFIX = "/api/v1"
@@ -16,8 +18,14 @@ API_GLOBAL_PREFIX = "/api/v1"
 async def lifespan(app: FastAPI):
     # Startup
     print(f"🚀 Starting in {settings.app_env} mode")
+    await warmup()
+
+    scheduler = create_scheduler()
+    scheduler.start()
+    print("📅 Scheduler is up")
     yield
     # Shutdown
+    scheduler.shutdown(wait=False)
     await close_redis()
     await ree_client.close()
     print("👋 Closing connections")

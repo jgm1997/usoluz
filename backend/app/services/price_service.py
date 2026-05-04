@@ -76,19 +76,20 @@ async def _save_to_db(db: AsyncSession, prices: list[dict[str, Any]]):
 
 
 async def get_prices_by_date(
-    db: AsyncSession, target_date: date, provider: str
+    db: AsyncSession, target_date: date, provider: str, force_refresh: bool = False
 ) -> list[dict[str, Any]]:
     cache_key = _cache_key(target_date, provider)
-    cached = await cache_get(cache_key)
-    if cached:
-        logger.debug(f"Cache HIT for {cache_key}")
-        return cached
+    if not force_refresh:
+        cached = await cache_get(cache_key)
+        if cached:
+            logger.debug(f"Cache HIT for {cache_key}")
+            return cached
 
-    db_prices = await _fetch_from_db(db, target_date, provider)
-    if db_prices:
-        logger.debug(f"DB HIT for {cache_key}")
-        await cache_set(cache_key, db_prices, _choose_ttl(target_date))
-        return db_prices
+        db_prices = await _fetch_from_db(db, target_date, provider)
+        if db_prices:
+            logger.debug(f"DB HIT for {cache_key}")
+            await cache_set(cache_key, db_prices, _choose_ttl(target_date))
+            return db_prices
 
     logger.info(f"Fetching from REE for {target_date} / {provider}")
     if provider == "ree_pvpc":

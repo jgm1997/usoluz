@@ -12,7 +12,7 @@ engine = create_async_engine(
     max_overflow=20,
 )
 
-AsyncSesionLocal = async_sessionmaker(
+AsyncSessionLocal = async_sessionmaker(
     bind=engine, class_=AsyncSession, expire_on_commit=False
 )
 
@@ -22,7 +22,7 @@ class Base(DeclarativeBase):
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    async with AsyncSesionLocal() as session:
+    async with AsyncSessionLocal() as session:
         try:
             yield session
             await session.commit()
