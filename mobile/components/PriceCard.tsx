@@ -23,10 +23,8 @@ export function PriceCard({ price }: Readonly<Props>) {
     <View style={[styles.card, { borderColor: color.border }]}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.label}>Precio actual</Text>
-        <Text style={styles.hour}>
-          Franja {formatHour(price.datetime_utc)}h
-        </Text>
+        <Text style={styles.label}>Current price</Text>
+        <Text style={styles.hour}>Slot {formatHour(price.datetime_utc)}h</Text>
       </View>
 
       {/* Main price */}
@@ -85,12 +83,12 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   priceValue: {
-    fontSize: 64,
+    fontSize: 60,
     fontWeight: "800",
     lineHeight: 68,
   },
   priceUnit: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "600",
     marginBottom: 8,
   },

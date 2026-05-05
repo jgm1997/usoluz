@@ -3,9 +3,9 @@ import { Colors } from "../constants/colors";
 import { PriceClassification } from "../types/price";
 
 const LABELS: Record<PriceClassification, string> = {
-  cheap: "Barato",
+  cheap: "Cheap",
   normal: "Normal",
-  expensive: "Caro",
+  expensive: "Expensive",
 };
 
 interface Props {

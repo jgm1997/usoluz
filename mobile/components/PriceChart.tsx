@@ -21,7 +21,7 @@ function barColor(classification: PriceClassification): string {
 
 export function PriceChart({ prices }: Readonly<Props>) {
   const data = prices.map((p) => ({
-    value: Number.parseFloat((p.value_kwh * 100).toFixed(3)),
+    value: p.value_kwh,
     classification: p.classification,
     hour: new Date(p.datetime_utc).toLocaleTimeString("es-ES", {
       hour: "2-digit",
@@ -34,14 +34,15 @@ export function PriceChart({ prices }: Readonly<Props>) {
   const slotW = n > 0 ? PLOT_W / n : 0;
   const barW = slotW * 0.75;
 
-  const yTicks = Array.from({ length: Y_TICKS + 1 }, (_, i) =>
-    Math.round(((maxVal / Y_TICKS) * i + Number.EPSILON) * 100) / 100,
+  const yTicks = Array.from(
+    { length: Y_TICKS + 1 },
+    (_, i) => Math.round(((maxVal / Y_TICKS) * i + Number.EPSILON) * 100) / 100,
   );
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Daily evolution</Text>
-      <Text style={styles.subtitle}>Price in c€/kWh every hour</Text>
+      <Text style={styles.subtitle}>Price in €/kWh every hour</Text>
       <Svg width={CHART_W} height={CHART_H}>
         <G transform={`translate(${PAD.left}, ${PAD.top})`}>
           {yTicks.map((tick) => {
@@ -64,7 +65,7 @@ export function PriceChart({ prices }: Readonly<Props>) {
                   fill={Colors.textSecondary}
                   textAnchor="end"
                 >
-                  {tick.toFixed(2)}
+                  {tick.toFixed(5)}
                 </SvgText>
               </G>
             );

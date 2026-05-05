@@ -67,7 +67,7 @@ export default function HomeScreen() {
   if (loadingCurrent || loadingToday) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.loadingText}>Cargando precios...</Text>
+        <Text style={styles.loadingText}>Loading prices...</Text>
       </View>
     );
   }
@@ -77,10 +77,10 @@ export default function HomeScreen() {
       <View style={styles.centered}>
         <Text style={styles.errorEmoji}>⚡</Text>
         <Text style={styles.errorText}>
-          No se han podido cargar los precios
+          Couldn't load prices
         </Text>
         <Pressable style={styles.retryButton} onPress={() => refetchCurrent()}>
-          <Text style={styles.retryText}>Reintentar</Text>
+          <Text style={styles.retryText}>Retry</Text>
         </Pressable>
       </View>
     );
@@ -102,16 +102,16 @@ export default function HomeScreen() {
 
       {todayPrices && (
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Resumen de hoy</Text>
+          <Text style={styles.sectionTitle}>Today's Summary</Text>
           <View style={styles.summaryCard}>
             <SummaryRow
-              label="💚 Hora más barata"
+              label="💚 Cheapest Hour"
               value={`${formatHour(todayPrices.cheapest_hour.datetime_utc)} · ${formatPrice(todayPrices.cheapest_hour.value_kwh)}`}
               color={Colors.cheap.text}
             />
             <View style={styles.divider} />
             <SummaryRow
-              label="🔴 Hora más cara"
+              label="🔴 Most Expensive Hour"
               value={`${formatHour(todayPrices.most_expensive_hour.datetime_utc)} · ${formatPrice(todayPrices.most_expensive_hour.value_kwh)}`}
               color={Colors.expensive.text}
             />
@@ -126,14 +126,14 @@ export default function HomeScreen() {
       )}
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Ver más</Text>
+        <Text style={styles.sectionTitle}>See more</Text>
         <View style={styles.quickActions}>
           <Pressable
             style={styles.actionButton}
             onPress={() => router.push("/today")}
           >
             <Text style={styles.actionEmoji}>📋</Text>
-            <Text style={styles.actionText}>Lista de hoy</Text>
+            <Text style={styles.actionText}>Today's List</Text>
           </Pressable>
 
           <Pressable
@@ -141,7 +141,7 @@ export default function HomeScreen() {
             onPress={() => router.push("/forecast")}
           >
             <Text style={styles.actionEmoji}>📈</Text>
-            <Text style={styles.actionText}>Mañana</Text>
+            <Text style={styles.actionText}>Tomorrow</Text>
           </Pressable>
 
           <Pressable
@@ -149,7 +149,7 @@ export default function HomeScreen() {
             onPress={() => router.push("/settings")}
           >
             <Text style={styles.actionEmoji}>🔔</Text>
-            <Text style={styles.actionText}>Alertas</Text>
+            <Text style={styles.actionText}>Alerts</Text>
           </Pressable>
         </View>
       </View>

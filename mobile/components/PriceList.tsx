@@ -1,7 +1,6 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { Colors } from "../constants/colors";
 import { PriceItem } from "../types/price";
-import { PriceBadge } from "./PriceBadge";
 
 interface Props {
   prices: PriceItem[];
@@ -65,13 +64,10 @@ function PriceRow({
       </View>
 
       {/* Price */}
-      <Text style={[styles.price, { color: color.text }]}>
-        {(item.value_kwh * 100).toFixed(2)}
-        <Text style={styles.priceUnit}> c€</Text>
+      <Text numberOfLines={1} style={[styles.price, { color: color.text }]}>
+        {item.value_kwh.toFixed(5)}
+        <Text style={styles.priceUnit}> €</Text>
       </Text>
-
-      {/* Badge */}
-      <PriceBadge classification={item.classification} size="sm" />
     </View>
   );
 }
@@ -83,18 +79,17 @@ export function PriceList({
   const hour = getCurrentHour();
 
   return (
-    <FlatList
-      data={prices}
-      keyExtractor={(item) => item.datetime_utc}
-      renderItem={({ item }) => (
+    <View style={styles.list}>
+      {prices.map((item) => (
         <PriceRow
+          key={item.datetime_utc}
           item={item}
           isCurrent={
             highlightCurrent && Number(getItemHour(item.datetime_utc)) === hour
           }
         />
-      )}
-    />
+      ))}
+    </View>
   );
 }
 
@@ -139,7 +134,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   price: {
-    width: 58,
+    width: 82,
     fontSize: 14,
     fontWeight: "700",
     textAlign: "right",
