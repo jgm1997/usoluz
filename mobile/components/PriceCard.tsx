@@ -16,10 +16,6 @@ function formatHour(datetime_utc: string): string {
   });
 }
 
-function formatPrice(value_kwh: number): string {
-  return (value_kwh * 100).toFixed(3);
-}
-
 export function PriceCard({ price }: Readonly<Props>) {
   const color = Colors[price.classification];
 
@@ -38,9 +34,9 @@ export function PriceCard({ price }: Readonly<Props>) {
         style={[styles.priceContainer, { backgroundColor: color.background }]}
       >
         <Text style={[styles.priceValue, { color: color.text }]}>
-          {formatPrice(price.value_kwh)}
+          {price.value_kwh}
         </Text>
-        <Text style={[styles.priceUnit, { color: color.text }]}>c€/kWh</Text>
+        <Text style={[styles.priceUnit, { color: color.text }]}>€/kWh</Text>
       </View>
 
       {/* Badge + price in MWh */}

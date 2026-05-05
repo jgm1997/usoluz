@@ -1,4 +1,4 @@
-const DEV_API_URL = "http://localhost:3000/api/v1";
+const DEV_API_URL = "http://localhost:8000/api/v1";
 const PROD_API_URL = "https://api.usoluz.com/api/v1";
 
 export const Config = {
