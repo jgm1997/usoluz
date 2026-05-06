@@ -32,6 +32,8 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 
 COPY . .
 
+COPY --chmod=755 entrypoint.sh .
+
 RUN addgroup --system appgroup && \
     adduser --system --ingroup appgroup appuser && \
     chown -R appuser:appgroup /app
@@ -40,6 +42,4 @@ USER appuser
 
 EXPOSE 8000
 
-COPY entrypoint.sh .
-RUN chmod +x entrypoint.sh
 CMD [ "./entrypoint.sh" ]
