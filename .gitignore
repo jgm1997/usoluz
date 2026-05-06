@@ -1,5 +1,5 @@
 */.env
-
 .vscode
-
 firebase-credentials.json
+mobile/google-services.json
+mobile/GoogleService-Info.plist
