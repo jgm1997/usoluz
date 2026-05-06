@@ -10,9 +10,6 @@
       "android": {
         "buildType": "apk"
       },
-      "ios": {
-        "simulator": true
-      },
       "env": {
         "APP_ENV": "development"
       }
