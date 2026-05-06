@@ -4,7 +4,10 @@ module.exports = {
     slug: "uso-luz",
     version: "1.0.0",
     scheme: "usoluz",
-    platforms: ["ios", "android"],
+    platforms: [
+      //"ios",
+      "android",
+    ],
     plugins: [
       "expo-router",
       [
@@ -19,7 +22,9 @@ module.exports = {
     android: {
       package: "es.jgm1997.usoluz",
       versionCode: 1,
-      ...(process.env.GOOGLE_SERVICES_JSON ? { googleServicesFile: process.env.GOOGLE_SERVICES_JSON } : {}),
+      ...(process.env.GOOGLE_SERVICES_JSON
+        ? { googleServicesFile: process.env.GOOGLE_SERVICES_JSON }
+        : {}),
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#1565C0",
