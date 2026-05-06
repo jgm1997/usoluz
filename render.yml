@@ -1,0 +1,58 @@
+services:
+  # Backend
+  - type: web
+    name: usoluz-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /health
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_SECRET_KEY
+        generateValue: true
+      - key: POSTGRES_HOST
+        fromDatabase:
+          name: usoluz-db
+          property: host
+      - key: POSTGRES_PORT
+        fromDatabase:
+          name: usoluz-db
+          property: port
+      - key: POSTGRES_USER
+        fromDatabase:
+          name: usoluz-db
+          property: username
+      - key: POSTGRES_PASSWORD
+        fromDatabase:
+          name: usoluz-db
+          property: password
+      - key: POSTGRES_DB
+        fromDatabase:
+          name: usoluz-db
+          property: database
+      - key: REDIS_HOST
+        fromService:
+          name: usoluz-redis
+          type: redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          name: usoluz-redis
+          type: redis
+          property: port
+      - key: FIREBASE_CREDENTIALS_B64
+        sync: false
+
+  # Redis
+  - type: redis
+    name: usoluz-redis
+    plan: free
+    maxmemory-policy: allkeys-lru
+
+# PostgreSQL
+databases:
+  - name: usoluz-db
+    plan: free
+    database: luz_db
+    username: luz_user

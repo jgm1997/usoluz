@@ -1,4 +1,6 @@
+import base64
 from functools import lru_cache
+import tempfile
 
 from pydantic_settings import BaseSettings
 
@@ -20,7 +22,8 @@ class Settings(BaseSettings):
     redis_port: int = 6379
 
     # Firebase
-    firebase_credentials_path: str
+    firebase_credentials_b64: str | None = None
+    firebase_credentials_path: str | None = None
 
     # Computed - not .env variables
     @property
@@ -30,6 +33,19 @@ class Settings(BaseSettings):
     @property
     def redis_url(self) -> str:
         return f"redis://{self.redis_host}:{self.redis_port}"
+
+    def get_firebase_credentials_path(self) -> str:
+        if self.firebase_credentials_b64:
+            decoded = base64.b64decode(self.firebase_credentials_b64)
+            tmp = tempfile.NamedTemporaryFile(mode="wb", suffix=".json", delete=False)
+            tmp.write(decoded)
+            tmp.close()
+            return tmp.name
+        
+        if self.firebase_credentials_path:
+            return self.firebase_credentials_path
+        
+        raise ValueError("No Firebase credentials configured")
 
     class Config:
         env_file = ".env"
