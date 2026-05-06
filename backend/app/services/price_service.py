@@ -1,4 +1,5 @@
 from datetime import date, datetime, timezone
+from zoneinfo import ZoneInfo
 from decimal import Decimal
 import logging
 from typing import Any
@@ -114,21 +115,16 @@ async def get_current_price(db: AsyncSession, provider: str) -> dict[str, Any] |
     if cached:
         return cached
 
-    today = date.today()
+    madrid_tz = ZoneInfo("Europe/Madrid")
+    now = datetime.now(madrid_tz)
+    today = now.date()
     prices = await get_prices_by_date(db, today, provider)
     if not prices:
         return None
 
-    now_hour = datetime.now(timezone.utc).hour
+    now_hour = now.hour
     current = next(
-        (
-            p
-            for p in prices
-            if datetime.fromisoformat(p["datetime_utc"].replace("Z", "+00:00"))
-            .replace(tzinfo=None)
-            .hour
-            == now_hour
-        ),
+        (p for p in prices if datetime.fromisoformat(p["datetime_utc"]).hour == now_hour),
         None,
     )
     if current:

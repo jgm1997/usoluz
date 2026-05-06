@@ -35,11 +35,11 @@ function formatPrice(value_kwh: number): string {
 }
 
 function formatHour(datetime_utc: string): string {
-  return new Date(datetime_utc).toLocaleTimeString("es-ES", {
+  return new Intl.DateTimeFormat("es-ES", {
     hour: "2-digit",
     minute: "2-digit",
     timeZone: "Europe/Madrid",
-  });
+  }).format(new Date(datetime_utc));
 }
 
 export default function HomeScreen() {

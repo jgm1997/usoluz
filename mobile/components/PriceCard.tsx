@@ -8,12 +8,11 @@ interface Props {
 }
 
 function formatHour(datetime_utc: string): string {
-  const date = new Date(datetime_utc);
-  return date.toLocaleTimeString("es-ES", {
+  return new Intl.DateTimeFormat("es-ES", {
     hour: "2-digit",
     minute: "2-digit",
     timeZone: "Europe/Madrid",
-  });
+  }).format(new Date(datetime_utc));
 }
 
 export function PriceCard({ price }: Readonly<Props>) {
@@ -32,15 +31,15 @@ export function PriceCard({ price }: Readonly<Props>) {
         style={[styles.priceContainer, { backgroundColor: color.background }]}
       >
         <Text style={[styles.priceValue, { color: color.text }]}>
-          {price.value_kwh}
+          {(price.value_kwh * 100).toFixed(2)}
         </Text>
-        <Text style={[styles.priceUnit, { color: color.text }]}>€/kWh</Text>
+        <Text style={[styles.priceUnit, { color: color.text }]}>c€/kWh</Text>
       </View>
 
       {/* Badge + price in MWh */}
       <View style={styles.footer}>
         <PriceBadge classification={price.classification} size="lg" />
-        <Text style={styles.mwhPrice}>{price.value_kwh.toFixed(4)} €/kWh</Text>
+        <Text style={styles.mwhPrice}>{price.value_kwh.toFixed(5)} €/kWh</Text>
       </View>
     </View>
   );
