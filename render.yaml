@@ -3,6 +3,7 @@ services:
   - type: web
     name: usoluz-backend
     runtime: docker
+    plan: free
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
     healthCheckPath: /health
@@ -22,7 +23,7 @@ services:
       - key: POSTGRES_USER
         fromDatabase:
           name: usoluz-db
-          property: username
+          property: user
       - key: POSTGRES_PASSWORD
         fromDatabase:
           name: usoluz-db
@@ -48,11 +49,9 @@ services:
   - type: redis
     name: usoluz-redis
     plan: free
-    maxmemory-policy: allkeys-lru
+    ipAllowList: []
 
 # PostgreSQL
 databases:
   - name: usoluz-db
     plan: free
-    database: luz_db
-    username: luz_user
