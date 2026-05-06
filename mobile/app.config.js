@@ -19,7 +19,7 @@ module.exports = {
     android: {
       package: "es.jgm1997.usoluz",
       versionCode: 1,
-      googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? "./google-services.json",
+      ...(process.env.GOOGLE_SERVICES_JSON ? { googleServicesFile: process.env.GOOGLE_SERVICES_JSON } : {}),
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#1565C0",
@@ -28,7 +28,7 @@ module.exports = {
     ios: {
       bundleIdentifier: "es.jgm1997.usoluz",
       buildNumber: "1",
-      googleServicesFile: process.env.GOOGLE_SERVICE_INFO_PLIST ?? "./GoogleService-Info.plist",
+      ...(process.env.GOOGLE_SERVICE_INFO_PLIST ? { googleServicesFile: process.env.GOOGLE_SERVICE_INFO_PLIST } : {}),
       supportsTablet: false,
     },
     extra: {
