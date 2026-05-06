@@ -25,12 +25,12 @@ module.exports = {
         backgroundColor: "#1565C0",
       },
     },
-    ios: {
-      bundleIdentifier: "es.jgm1997.usoluz",
-      buildNumber: "1",
-      ...(process.env.GOOGLE_SERVICE_INFO_PLIST ? { googleServicesFile: process.env.GOOGLE_SERVICE_INFO_PLIST } : {}),
-      supportsTablet: false,
-    },
+    // ios: {
+    //   bundleIdentifier: "es.jgm1997.usoluz",
+    //   buildNumber: "1",
+    //   ...(process.env.GOOGLE_SERVICE_INFO_PLIST ? { googleServicesFile: process.env.GOOGLE_SERVICE_INFO_PLIST } : {}),
+    //   supportsTablet: false,
+    // },
     extra: {
       eas: {
         projectId: "34a45df3-cbaa-4ba2-84d6-83068879abb4",
