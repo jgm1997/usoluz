@@ -87,8 +87,8 @@ const styles = StyleSheet.create({
     lineHeight: 68,
   },
   priceUnit: {
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 28,
+    fontWeight: "700",
     marginBottom: 8,
   },
   footer: {
