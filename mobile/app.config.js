@@ -18,6 +18,7 @@ module.exports = {
           sounds: [],
         },
       ],
+      "expo-localization"
     ],
     android: {
       package: "es.jgm1997.usoluz",

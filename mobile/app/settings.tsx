@@ -16,6 +16,9 @@ import { Colors } from "../constants/colors";
 import { useEffect, useState } from "react";
 import { api } from "../services/api";
 import { useAlertStore } from "../store/alertStore";
+import { useTranslation } from "react-i18next";
+import { useSettingsStore } from "../store/settingsStore";
+import { useNavigation } from "expo-router";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -26,9 +29,11 @@ Notifications.setNotificationHandler({
   }),
 });
 
-async function registerForPushNotifications(): Promise<string | null> {
+async function registerForPushNotifications(
+  t: (key: string) => string,
+): Promise<string | null> {
   if (!Device.isDevice) {
-    Alert.alert("Notifications only work on physical devices.");
+    Alert.alert(t("settings.errorNotifications"));
     return null;
   }
 
@@ -42,8 +47,8 @@ async function registerForPushNotifications(): Promise<string | null> {
 
   if (finalStatus !== "granted") {
     Alert.alert(
-      "Permission denied",
-      "Allow notifications in your device's settings to receive price update alerts.",
+      t("settings.permissionDenied"),
+      t("settings.permissionDeniedMsg"),
     );
     return null;
   }
@@ -52,6 +57,15 @@ async function registerForPushNotifications(): Promise<string | null> {
   return token.data;
 }
 
+function getButtonText(
+  isSaving: boolean,
+  savedOk: boolean,
+  t: (key: string) => string,
+) {
+  if (isSaving) return t("settings.saving");
+  if (savedOk) return t("settings.saved");
+  return t("settings.save");
+}
 interface AlertRowProps {
   label: string;
   description: string;
@@ -61,12 +75,6 @@ interface AlertRowProps {
   enabled: boolean;
   onToggle: (value: boolean) => void;
   onChangeThreshold: (value: string) => void;
-}
-
-function getButtonText(isSaving: boolean, savedOk: boolean) {
-  if (isSaving) return "Saving...";
-  if (savedOk) return "Settings saved!";
-  return "Save settings";
 }
 
 function AlertRow({
@@ -137,24 +145,28 @@ export default function SettingsScreen() {
 
   const [isSaving, setIsSaving] = useState(false);
   const [savedOk, setSavedOk] = useState(false);
+  const { t } = useTranslation();
+  const { language, setLanguage } = useSettingsStore();
+  const navigation = useNavigation();
 
   useEffect(() => {
+    navigation.setOptions({ headerTitle: t("settings.title") });
     async function setup() {
       if (deviceToken) return;
-      const token = await registerForPushNotifications();
+      const token = await registerForPushNotifications(t);
       if (token) {
         setDeviceToken(token);
         await api.registerDevice(token, Platform.OS as "ios" | "android");
       }
     }
     setup();
-  }, []);
+  }, [t]);
 
   async function handleSave() {
     if (!deviceToken) {
       Alert.alert(
-        "No permissions",
-        "We need permissions to send you notifications.",
+        t("settings.noPermission"),
+        t("settings.noPermissionDescription"),
       );
       return;
     }
@@ -164,8 +176,8 @@ export default function SettingsScreen() {
 
     if (cheapAlertEnabled && (Number.isNaN(cheapVal) || cheapVal <= 0)) {
       Alert.alert(
-        "Invalid cheap threshold",
-        "Please enter a valid number above 0.",
+        t("settings.invalidThreshold"),
+        t("settings.invalidThresholdDescription"),
       );
       return;
     }
@@ -175,8 +187,8 @@ export default function SettingsScreen() {
       (Number.isNaN(expensiveVal) || expensiveVal <= 0)
     ) {
       Alert.alert(
-        "Invalid expensive threshold",
-        "Please enter a valid number above 0.",
+        t("settings.invalidExpensiveThreshold"),
+        t("settings.invalidExpensiveThresholdDescription"),
       );
       return;
     }
@@ -204,7 +216,7 @@ export default function SettingsScreen() {
       setSavedOk(true);
       setTimeout(() => setSavedOk(false), 3000);
     } catch {
-      Alert.alert("Error", "Could not save settings. Please try again.");
+      Alert.alert(t("settings.saveError"), t("settings.saveErrorMsg"));
     } finally {
       setIsSaving(false);
     }
@@ -231,15 +243,15 @@ export default function SettingsScreen() {
           >
             <Text style={styles.deviceText}>
               {deviceToken
-                ? "Device registered for notifications"
-                : "Device not registered"}
+                ? t("settings.deviceRegistered")
+                : t("settings.deviceNotRegistered")}
             </Text>
           </View>
           {!deviceToken && (
             <Pressable
               style={styles.registerButton}
               onPress={async () => {
-                const token = await registerForPushNotifications();
+                const token = await registerForPushNotifications(t);
                 if (token) {
                   setDeviceToken(token);
                   await api.registerDevice(
@@ -250,7 +262,7 @@ export default function SettingsScreen() {
               }}
             >
               <Text style={styles.registerButtonText}>
-                Enable notifications
+                {t("settings.activateNotifications")}
               </Text>
             </Pressable>
           )}
@@ -258,16 +270,17 @@ export default function SettingsScreen() {
 
         {/* Alerts */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Setup alerts</Text>
+          <Text style={styles.sectionTitle}>
+            {t("settings.configureAlerts")}
+          </Text>
           <Text style={styles.sectionSubtitle}>
-            We'll let you know when the price goes below or above your set
-            thresholds.
+            {t("settings.configureAlertsSubtitle")}
           </Text>
 
           <View style={styles.alertsCard}>
             <AlertRow
-              label="Cheap price"
-              description="Let me know when energy is cheap"
+              label={t("settings.lowPrice")}
+              description={t("settings.lowPriceDesc")}
               type="below"
               classification="cheap"
               threshold={cheapThreshold}
@@ -279,8 +292,8 @@ export default function SettingsScreen() {
             <View style={styles.divider} />
 
             <AlertRow
-              label="Expensive price"
-              description="Let me know when energy is expensive"
+              label={t("settings.highPrice")}
+              description={t("settings.highPriceDesc")}
               type="above"
               classification="expensive"
               threshold={expensiveThreshold}
@@ -293,22 +306,56 @@ export default function SettingsScreen() {
 
         {/* Price reference */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Price reference</Text>
+          <Text style={styles.sectionTitle}>
+            {t("settings.priceReference")}
+          </Text>
           <View style={styles.referenceCard}>
             <View style={styles.referenceRow}>
               <PriceBadge classification="cheap" size="md" />
-              <Text style={styles.referenceText}>Lower than 10 c€/kWh</Text>
+              <Text style={styles.referenceText}>
+                {t("settings.cheapBelow")}
+              </Text>
+            </View>
+            <View style={styles.referenceRow}>
+              <PriceBadge classification="normal" size="md" />
+              <Text style={styles.referenceText}>
+                {t("settings.normalBetween")}
+              </Text>
+            </View>
+
+            <View style={styles.referenceRow}>
+              <PriceBadge classification="expensive" size="md" />
+              <Text style={styles.referenceText}>
+                {t("settings.expensiveAbove")}
+              </Text>
             </View>
           </View>
-          <View style={styles.referenceRow}>
-            <PriceBadge classification="normal" size="md" />
-            <Text style={styles.referenceText}>Between 10 and 18 c€/kWh</Text>
-          </View>
+        </View>
+      </View>
 
-          <View style={styles.referenceRow}>
-            <PriceBadge classification="expensive" size="md" />
-            <Text style={styles.referenceText}>Higher than 18 c€/kWh</Text>
-          </View>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{t("settings.language")}</Text>
+        <View style={styles.languageCard}>
+          {(["en", "es", "ca"] as const).map((lang) => (
+            <Pressable
+              key={lang}
+              onPress={() => setLanguage(lang)}
+              style={[
+                styles.languageOption,
+                language === lang && styles.languageOptionActive,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.languageText,
+                  language === lang && styles.languageTextActive,
+                ]}
+              >
+                {t(`languages.${lang}`)}
+              </Text>
+              {language === lang && <Text style={styles.languageCheck}>✓</Text>}
+            </Pressable>
+          ))}
         </View>
       </View>
 
@@ -322,7 +369,7 @@ export default function SettingsScreen() {
         disabled={isSaving}
       >
         <Text style={styles.saveButtonText}>
-          {getButtonText(isSaving, savedOk)}
+          {getButtonText(isSaving, savedOk, t)}
         </Text>
       </Pressable>
     </ScrollView>
@@ -497,5 +544,40 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontWeight: "700",
     fontSize: 16,
+  },
+  languageCard: {
+    backgroundColor: Colors.card,
+    borderRadius: 16,
+    overflow: "hidden",
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  languageOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  languageOptionActive: {
+    backgroundColor: Colors.cheap.background,
+  },
+  languageText: {
+    fontSize: 14,
+    color: Colors.text,
+  },
+  languageTextActive: {
+    fontWeight: "600",
+    color: Colors.cheap.text,
+  },
+  languageCheck: {
+    fontSize: 16,
+    color: Colors.cheap.text,
+    fontWeight: "700",
   },
 });

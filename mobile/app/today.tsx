@@ -9,6 +9,9 @@ import { useTodayPrices } from "../hooks/usePrices";
 import { PriceList } from "../components/PriceList";
 import { PriceChart } from "../components/PriceChart";
 import { Colors } from "../constants/colors";
+import { useTranslation } from "react-i18next";
+import { useNavigation } from "expo-router";
+import { useEffect } from "react";
 
 function StatCard({
   emoji,
@@ -55,10 +58,17 @@ export default function TodayScreen() {
     isRefetching,
   } = useTodayPrices();
 
+  const navigation = useNavigation();
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    navigation.setOptions({ title: t("today.title") });
+  }, [t]);
+
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.loadingText}>Loading today's prices...</Text>
+        <Text style={styles.loadingText}>{t("today.loadingPrices")}</Text>
       </View>
     );
   }
@@ -67,7 +77,7 @@ export default function TodayScreen() {
     return (
       <View style={styles.centered}>
         <Text style={styles.errorEmoji}>⚡</Text>
-        <Text style={styles.errorText}>No data available</Text>
+        <Text style={styles.errorText}>{t("common.noData")}</Text>
       </View>
     );
   }
@@ -88,19 +98,19 @@ export default function TodayScreen() {
       <View style={styles.statsRow}>
         <StatCard
           emoji="💚"
-          label="Cheapest"
+          label={t("today.cheapest")}
           value={`${formatHour(todayPrices.cheapest_hour.datetime_utc)}h · ${formatPrice(todayPrices.cheapest_hour.value_kwh)}`}
           color={Colors.cheap.text}
         />
         <StatCard
           emoji="📊"
-          label="Average"
+          label={t("today.average")}
           value={calcAverage(todayPrices.prices)}
           color={Colors.normal.text}
         />
         <StatCard
           emoji="🔴"
-          label="Most expensive"
+          label={t("today.mostExpensive")}
           value={`${formatHour(todayPrices.most_expensive_hour.datetime_utc)}h · ${formatPrice(todayPrices.most_expensive_hour.value_kwh)}`}
           color={Colors.expensive.text}
         />
@@ -111,7 +121,7 @@ export default function TodayScreen() {
 
       {/* Hourly prices list */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Hourly prices</Text>
+        <Text style={styles.sectionTitle}>{t("today.pricesByHour")}</Text>
         <View style={styles.listCard}>
           <PriceList prices={todayPrices.prices} highlightCurrent />
         </View>

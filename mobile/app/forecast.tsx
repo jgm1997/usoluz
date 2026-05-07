@@ -9,6 +9,9 @@ import { usePricesByDate } from "../hooks/usePrices";
 import { Colors } from "../constants/colors";
 import { PriceChart } from "../components/PriceChart";
 import { PriceList } from "../components/PriceList";
+import { useTranslation } from "react-i18next";
+import { useNavigation } from "expo-router";
+import { useEffect } from "react";
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString("es-ES", {
@@ -41,13 +44,15 @@ function calcAverage(prices: { value_kwh: number }[]): number {
 }
 
 function NotAvailable() {
+  const { t } = useTranslation();
   return (
     <View style={styles.notAvailable}>
       <Text style={styles.notAvailableEmoji}>🕐</Text>
-      <Text style={styles.notAvailableTitle}>Prices not yet available</Text>
+      <Text style={styles.notAvailableTitle}>
+        {t("forecast.notAvailableTitle")}
+      </Text>
       <Text style={styles.notAvailableText}>
-        OMIE publishes the prices for the next day starting at 20:15. Please
-        check back this evening.
+        {t("forecast.notAvailableText")}
       </Text>
     </View>
   );
@@ -64,10 +69,17 @@ export default function ForecastScreen() {
     isError,
   } = usePricesByDate(tomorrow);
 
+  const { t } = useTranslation();
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    navigation.setOptions({ title: t("forecast.title") });
+  }, [t]);
+
   if (isLoading) {
     return (
       <View style={styles.screen}>
-        <Text style={styles.loadingText}>Loading tomorrow's forecast...</Text>
+        <Text style={styles.loadingText}>{t("forecast.loadingPrices")}</Text>
       </View>
     );
   }
@@ -100,12 +112,12 @@ export default function ForecastScreen() {
 
   const getAdviceMessage = (): string => {
     if (cheapCount > 6) {
-      return `Tomorrow there will be ${cheapCount} cheap hours. It's a good day to run your high consume appliances!`;
+      return t("forecast.tipCheap", { count: cheapCount });
     }
     if (expensiveCount > 8) {
-      return `Tomorrow there will be ${expensiveCount} expensive hours. Try concentrating your energy use in the cheaper hours.`;
+      return t("forecast.tipExpensive", { count: expensiveCount });
     }
-    return `Tomorrow's prices will be moderate. You can run your appliances as usual.`;
+    return t("forecast.tipNormal");
   };
 
   return (
@@ -122,17 +134,19 @@ export default function ForecastScreen() {
     >
       {/* Header with date */}
       <View style={styles.dateCard}>
-        <Text style={styles.dateLabel}>Prices for </Text>
+        <Text style={styles.dateLabel}>{t("forecast.pricesFor")}</Text>
         <Text style={styles.dateValue}>{formatDate(forecastPrices.date)}</Text>
       </View>
 
       {/* Day summary */}
       <View style={styles.summaryCard}>
-        <Text style={styles.sectionTitle}>Summary</Text>
+        <Text style={styles.sectionTitle}>{t("forecast.summary")}</Text>
         <View style={styles.summaryGrid}>
           <View style={styles.summaryItem}>
             <Text style={styles.summaryEmoji}>💚</Text>
-            <Text style={styles.summaryLabel}>Cheapest hours</Text>
+            <Text style={styles.summaryLabel}>
+              {t("forecast.cheapestHour")}
+            </Text>
             <Text style={[styles.summaryValue, { color: Colors.cheap.text }]}>
               {formatHour(forecastPrices.cheapest_hour.datetime_utc)}h
             </Text>
@@ -143,13 +157,17 @@ export default function ForecastScreen() {
 
           <View style={styles.summaryItem}>
             <Text style={styles.summaryEmoji}>📊</Text>
-            <Text style={styles.summaryLabel}>Average price</Text>
+            <Text style={styles.summaryLabel}>
+              {t("forecast.averagePrice")}
+            </Text>
             <Text style={styles.summarySubvalue}>{formatPrice(avg)}</Text>
           </View>
 
           <View style={styles.summaryItem}>
             <Text style={styles.summaryEmoji}>🔴</Text>
-            <Text style={styles.summaryLabel}>Most expensive hours</Text>
+            <Text style={styles.summaryLabel}>
+              {t("forecast.mostExpensiveHour")}
+            </Text>
             <Text
               style={[styles.summaryValue, { color: Colors.expensive.text }]}
             >
@@ -166,7 +184,7 @@ export default function ForecastScreen() {
       <View style={styles.tipCard}>
         <Text style={styles.tipEmoji}>💡</Text>
         <View style={styles.tipContent}>
-          <Text style={styles.tipTitle}>Advice for tomorrow</Text>
+          <Text style={styles.tipTitle}>{t("forecast.tip")}</Text>
           <Text style={styles.tipText}>{getAdviceMessage()}</Text>
         </View>
       </View>
@@ -176,7 +194,7 @@ export default function ForecastScreen() {
 
       {/* 24 hour list */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Prices by hour</Text>
+        <Text style={styles.sectionTitle}>{t("forecast.pricesByHour")}</Text>
         <View style={styles.listCard}>
           <PriceList prices={forecastPrices.prices} highlightCurrent={false} />
         </View>

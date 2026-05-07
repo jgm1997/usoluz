@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import {
   StyleSheet,
   Text,
@@ -12,6 +12,8 @@ import { useTodayPrices } from "../hooks/usePrices";
 import { Colors } from "../constants/colors";
 import { PriceCard } from "../components/PriceCard";
 import { PriceChart } from "../components/PriceChart";
+import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 
 function SummaryRow({
   label,
@@ -44,6 +46,12 @@ function formatHour(datetime_utc: string): string {
 
 export default function HomeScreen() {
   const router = useRouter();
+  const navigation = useNavigation();
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    navigation.setOptions({ title: t("home.title") });
+  }, [t]);
 
   const {
     data: currentPrice,
@@ -67,7 +75,7 @@ export default function HomeScreen() {
   if (loadingCurrent || loadingToday) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.loadingText}>Loading prices...</Text>
+        <Text style={styles.loadingText}>{t("common.loading")}</Text>
       </View>
     );
   }
@@ -76,11 +84,9 @@ export default function HomeScreen() {
     return (
       <View style={styles.centered}>
         <Text style={styles.errorEmoji}>⚡</Text>
-        <Text style={styles.errorText}>
-          Couldn't load prices
-        </Text>
+        <Text style={styles.errorText}>{t("common.error")}</Text>
         <Pressable style={styles.retryButton} onPress={() => refetchCurrent()}>
-          <Text style={styles.retryText}>Retry</Text>
+          <Text style={styles.retryText}>{t("common.retry")}</Text>
         </Pressable>
       </View>
     );
@@ -102,16 +108,16 @@ export default function HomeScreen() {
 
       {todayPrices && (
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Today's Summary</Text>
+          <Text style={styles.sectionTitle}>{t("home.todaySummary")}</Text>
           <View style={styles.summaryCard}>
             <SummaryRow
-              label="💚 Cheapest Hour"
+              label={`💚 ${t("home.cheapestHour")}`}
               value={`${formatHour(todayPrices.cheapest_hour.datetime_utc)} · ${formatPrice(todayPrices.cheapest_hour.value_kwh)}`}
               color={Colors.cheap.text}
             />
             <View style={styles.divider} />
             <SummaryRow
-              label="🔴 Most Expensive Hour"
+              label={`🔴 ${t("home.mostExpensiveHour")}`}
               value={`${formatHour(todayPrices.most_expensive_hour.datetime_utc)} · ${formatPrice(todayPrices.most_expensive_hour.value_kwh)}`}
               color={Colors.expensive.text}
             />
@@ -126,14 +132,14 @@ export default function HomeScreen() {
       )}
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>See more</Text>
+        <Text style={styles.sectionTitle}>{t("home.seeMore")}</Text>
         <View style={styles.quickActions}>
           <Pressable
             style={styles.actionButton}
             onPress={() => router.push("/today")}
           >
             <Text style={styles.actionEmoji}>📋</Text>
-            <Text style={styles.actionText}>Today's List</Text>
+            <Text style={styles.actionText}>{t("home.todayList")}</Text>
           </Pressable>
 
           <Pressable
@@ -141,7 +147,7 @@ export default function HomeScreen() {
             onPress={() => router.push("/forecast")}
           >
             <Text style={styles.actionEmoji}>📈</Text>
-            <Text style={styles.actionText}>Tomorrow</Text>
+            <Text style={styles.actionText}>{t("home.tomorrow")}</Text>
           </Pressable>
 
           <Pressable
@@ -149,7 +155,7 @@ export default function HomeScreen() {
             onPress={() => router.push("/settings")}
           >
             <Text style={styles.actionEmoji}>🔔</Text>
-            <Text style={styles.actionText}>Alerts</Text>
+            <Text style={styles.actionText}>{t("home.alerts")}</Text>
           </Pressable>
         </View>
       </View>

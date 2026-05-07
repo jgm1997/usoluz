@@ -2,6 +2,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { Colors } from "../constants/colors";
 import { PriceBadge } from "./PriceBadge";
 import { CurrentPrice } from "../types/price";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   price: CurrentPrice;
@@ -17,13 +18,14 @@ function formatHour(datetime_utc: string): string {
 
 export function PriceCard({ price }: Readonly<Props>) {
   const color = Colors[price.classification];
+  const {t} = useTranslation()
 
   return (
     <View style={[styles.card, { borderColor: color.border }]}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.label}>Current price</Text>
-        <Text style={styles.hour}>Slot {formatHour(price.datetime_utc)}h</Text>
+        <Text style={styles.label}>{t("home.currentPrice")}</Text>
+        <Text style={styles.hour}>{t("home.slot")} {formatHour(price.datetime_utc)}h</Text>
       </View>
 
       {/* Main price */}

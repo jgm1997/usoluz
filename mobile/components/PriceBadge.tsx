@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import { Colors } from "../constants/colors";
 import { PriceClassification } from "../types/price";
+import { useTranslation } from "react-i18next";
 
 const LABELS: Record<PriceClassification, string> = {
   cheap: "Cheap",
@@ -22,6 +23,7 @@ const SIZES = {
 export function PriceBadge({ classification, size = "md" }: Readonly<Props>) {
   const color = Colors[classification];
   const sizeStyle = SIZES[size];
+  const { t } = useTranslation();
 
   return (
     <View
@@ -44,7 +46,7 @@ export function PriceBadge({ classification, size = "md" }: Readonly<Props>) {
           },
         ]}
       >
-        {LABELS[classification]}
+        {t(`classification.${LABELS[classification].toLowerCase()}`)}
       </Text>
     </View>
   );

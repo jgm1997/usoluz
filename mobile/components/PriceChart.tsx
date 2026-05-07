@@ -2,6 +2,7 @@ import { Dimensions, StyleSheet, Text, View } from "react-native";
 import Svg, { G, Line, Rect, Text as SvgText } from "react-native-svg";
 import { Colors } from "../constants/colors";
 import { PriceClassification, PriceItem } from "../types/price";
+import { useTranslation } from "react-i18next";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const CHART_W = SCREEN_WIDTH - 32;
@@ -20,6 +21,7 @@ function barColor(classification: PriceClassification): string {
 }
 
 export function PriceChart({ prices }: Readonly<Props>) {
+  const { t } = useTranslation();
   const data = prices.map((p) => ({
     value: p.value_kwh,
     classification: p.classification,
@@ -41,8 +43,8 @@ export function PriceChart({ prices }: Readonly<Props>) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Daily evolution</Text>
-      <Text style={styles.subtitle}>Price in €/kWh every hour</Text>
+      <Text style={styles.title}>{t("home.dailyEvolution")}</Text>
+      <Text style={styles.subtitle}>{t("home.chartSubtitle")}</Text>
       <Svg width={CHART_W} height={CHART_H}>
         <G transform={`translate(${PAD.left}, ${PAD.top})`}>
           {yTicks.map((tick) => {
