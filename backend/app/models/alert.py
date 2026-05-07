@@ -19,7 +19,7 @@ class Alert(Base):
     created_at = Column(
         DateTime,
         server_default=func.now(),
-        default=datetime.now(timezone.utc),
+        default=datetime.now(timezone.utc).replace(tzinfo=None),
         nullable=False,
     )
 

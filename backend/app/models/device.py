@@ -18,10 +18,12 @@ class Device(Base):
         DateTime,
         nullable=False,
         server_default=func.now(),
-        default=datetime.datetime.now(datetime.timezone.utc),
+        default=datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None),
     )
     updated_at = Column(
-        DateTime, nullable=True, onupdate=datetime.datetime.now(datetime.timezone.utc)
+        DateTime,
+        nullable=True,
+        onupdate=datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None),
     )
 
     def __repr__(self):
