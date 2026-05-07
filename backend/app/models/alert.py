@@ -1,4 +1,6 @@
+from datetime import datetime, timezone
 from sqlalchemy import Column, Integer, Numeric, String, Boolean, DateTime
+from sqlalchemy.sql import func
 
 from app.core.database import Base
 
@@ -14,7 +16,12 @@ class Alert(Base):
     provider = Column(String(50), nullable=False, default="ree_pvpc")
     is_active = Column(Boolean, nullable=False, default=True)
     last_triggered_at = Column(DateTime, nullable=True)
-    created_at = Column(DateTime, nullable=False)
+    created_at = Column(
+        DateTime,
+        server_default=func.now(),
+        default=datetime.now(timezone.utc),
+        nullable=False,
+    )
 
     def __repr__(self):
         return f"<Alert {self.alert_type} {self.threshold_kwh} €/kWh>"
