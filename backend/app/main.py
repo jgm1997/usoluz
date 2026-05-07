@@ -43,6 +43,6 @@ app.include_router(prices.router, prefix=API_GLOBAL_PREFIX)
 app.include_router(alerts.router, prefix=API_GLOBAL_PREFIX)
 
 
-@app.get("/health")
+@app.api_route("/health", methods=["GET", "HEAD"])
 async def get_health():
     return {"status": "ok", "env": settings.app_env}
